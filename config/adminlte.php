@@ -15,7 +15,7 @@ return [
     */
 
     'title' => 'DRG Sort Flow',
-    'title_prefix' => 'DSF',
+    'title_prefix' => 'DRG',
     'title_postfix' => '',
 
     /*
@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>DRG</b>Sort Flow',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -194,7 +194,7 @@ return [
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -246,18 +246,18 @@ return [
         ],
         ['header' => 'DRG LIST'],
         [
-            'text'       => 'Plannifié',
-            'icon_color' => 'green',
-            'url'        => 'planned',
-        ],
-        [
             'text'       => 'A plannifié',
-            'icon_color' => 'yellow',
+            'icon_color' => 'blue',
             'url'        => 'tobeplanned',
         ],
         [
+            'text'       => 'Plannifié',
+            'icon_color' => 'yellow',
+            'url'        => 'planned',
+        ],
+        [
             'text'       => 'Coupé',
-            'icon_color' => 'blue',
+            'icon_color' => 'green',
             'url'        => 'cut',
         ],
         
@@ -271,17 +271,6 @@ return [
             'text' => 'settings',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
         ],
     ],
 

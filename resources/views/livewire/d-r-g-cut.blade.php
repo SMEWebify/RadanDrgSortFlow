@@ -60,10 +60,9 @@
                 @endphp
 
                 <td class="project-actions">
-                    <a class="btn btn-success btn-sm" href="#" wire:click="restorToCut({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer coupée</a>
                     <a class="btn btn-warning btn-sm" href="#" wire:click="restorToPlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer planifiée</a>
                     <a class="btn btn-info btn-sm" href="#" wire:click="restorToBePlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer à planifiée</a>
-                </td>
+                    <a class="btn btn-danger btn-sm" href="#" wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</a> </td>
             </tr>
             @empty
                 <tr>

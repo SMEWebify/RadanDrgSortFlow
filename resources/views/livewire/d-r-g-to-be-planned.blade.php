@@ -44,7 +44,7 @@
                 @endphp
 
                 <td class="project-actions">
-                    <a class="btn btn-success btn-sm" href="#" wire:click="run({{$DRG->id}})"><i class="fas fa-folder"></i>Lancer</a>
+                    <a class="btn btn-warning btn-sm" href="#" wire:click="run({{$DRG->id}})"><i class="fas fa-folder"></i>Planifier</a>
                     <a class="btn btn-info btn-sm" href="#"><i class="fas fa-pencil-alt"></i>Edit</a>
                     <a class="btn btn-danger btn-sm" href="#" wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</a>
                 </td>

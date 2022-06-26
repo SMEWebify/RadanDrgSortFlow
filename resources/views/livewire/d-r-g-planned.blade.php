@@ -36,8 +36,12 @@
                 </td>
                 <td class="project_progress">
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}%">
-                        </div>
+                        @if($DRG->statu  != 7)
+                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}%">
+                        @else
+                            <div class="progress-bar bg-red" role="progressbar" aria-valuenow="{{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}%">
+                        @endif
+                            </div>
                     </div>
                     <small>
                         {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}% Complete
@@ -47,18 +51,24 @@
                     @if($DRG->statu  == 2)<span class="badge badge-warning">Planifier</span> @endif
                     @if($DRG->statu  == 3)<span class="badge badge-info">En cours</span> @endif
                     @if($DRG->statu  == 4)<span class="badge badge-danger">A refaire</span> @endif
+                    @if($DRG->statu  == 7)<span class="badge badge-danger">Stopper</span> @endif
+                    
                 </td>
                 <td>{{ $DRG->material }}</td>
                 <td>{{ $DRG->thickness }}</td>
                 <td>{{ $DRG->sheet_qty }}</td>
                 <td>
-                    <div class="btn-group btn-group-sm">
-                        <a href="#" wire:click="up({{ $DRG->id }})" class="btn btn-secondary"><i class="fa fa-plus"></i></a>
-                    </div>
-                    {{ $DRG->sheet_qty_done }}
+                    @if($DRG->statu  != 7)
                     <div class="btn-group btn-group-sm">
                         <a href="#" wire:click="down({{ $DRG->id }})" class="btn btn-primary"><i class="fa fa-minus"></i></a>
                     </div>
+                    @endif
+                    {{ $DRG->sheet_qty_done }}
+                    @if($DRG->statu  != 7)
+                    <div class="btn-group btn-group-sm">
+                        <a href="#" wire:click="up({{ $DRG->id }})" class="btn btn-secondary"><i class="fa fa-plus"></i></a>
+                    </div>
+                    @endif
                 </td>
                 <td>{{ $DRG->unit_time }} h</td>
                 <td>{{ $DRG->TotalTime() }} h</td>
@@ -70,17 +80,15 @@
                 @endphp
 
                 <td class="project-actions">
-                    <a class="btn btn-success btn-sm" href="#">
-                    <i class="fas fa-folder"></i>
-                    All Cut
-                    </a>
-                    <a class="btn btn-info btn-sm" href="#">
-                    <i class="fas fa-pencil-alt"></i>
-                    Edit
-                    </a>
-                    <a class="btn btn-danger btn-sm" href="#" wire:click="delete({{$DRG->id}})">
-                        <i class="fas fa-trash"></i>Delete
-                    </a>
+                    
+                    @if($DRG->statu  != 7)
+                    <a class="btn btn-success btn-sm" href="#"  wire:click="cut({{$DRG->id}})"><i class="fas fa-folder"></i>All Cut</a>
+                    <a class="btn btn-warning btn-sm" href="#" wire:click="stop({{$DRG->id}})"><i class="fas fa-trash"></i>Stop</a>
+                    @else
+                    <a class="btn btn-success btn-sm" href="#" wire:click="run({{$DRG->id}})"><i class="fas fa-trash"></i>Relancer</a>
+                    @endif
+                    <a class="btn btn-info btn-sm" href="#"><i class="fas fa-pencil-alt"></i>Edit</a>
+                    <a class="btn btn-danger btn-sm" href="#" wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</a>
                 </td>
             </tr>
             @empty

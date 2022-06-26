@@ -29,6 +29,7 @@ class CreateDrgsTable extends Migration
             #4 = A refaire
             #5 = Terminer
             #6 = Supprimer
+            #7 = Stopper
 			$table->text('comment', 65535)->nullable();
             $table->timestamps();
         });

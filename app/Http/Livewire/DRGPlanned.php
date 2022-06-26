@@ -32,8 +32,9 @@ class DRGPlanned extends Component
         $DRGList = $this->DRGList = Drg::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                         ->where('statu', 2)
                                         ->Orwhere('statu', 3)
-                                        ->Orwhere('statu', 4)->get();
-
+                                        ->Orwhere('statu', 4)
+                                        ->Orwhere('statu', 7)->get();
+                                        
         return view('livewire.d-r-g-planned', [
             'DRGList' => $DRGList,
         ]);
@@ -42,11 +43,23 @@ class DRGPlanned extends Component
     public function up($idStatu){
         // Update line
         Drg::find($idStatu)->increment('sheet_qty_done',1);
+        Drg::find($idStatu)->update(['statu'=>3]);
     }
 
     public function down($idStatu){
         // Update line
         Drg::find($idStatu)->decrement('sheet_qty_done',1);
+    }
+
+    
+    public function stop($idStatu){
+        // Update line
+        Drg::find($idStatu)->update(['statu'=>7]);
+    }
+
+    public function run($idStatu){
+        // Update line
+        Drg::find($idStatu)->update(['statu'=>3]);
     }
 
     public function delete($idStatu){
