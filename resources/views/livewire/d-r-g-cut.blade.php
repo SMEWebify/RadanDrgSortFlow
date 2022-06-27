@@ -4,11 +4,13 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>DRG nome</th>
+                <th>DRG nom </th>
                 <th>Image</th>
                 <th>Programme Progress</th>
                 <th>Status</th>
-                <th>Matière</th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('material')" role="button" href="#">Matière @include('include.sort-icon', ['field' => 'material'])</a>
+                </th>
                 <th>Epaisseur</th>
                 <th>Nombre de tôle</th>
                 <th>Nombre de tôle coupée</th>

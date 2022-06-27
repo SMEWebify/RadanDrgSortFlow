@@ -1,14 +1,26 @@
 <div>
     @include('include.alert-result')
+    <div class="card-body">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
+            </div>
+            <input type="text" class="form-control" wire:model="search" placeholder="Chercher une imbrication">
+        </div>
+    </div>
     <table class="table table-striped projects">
         <thead>
             <tr>
                 <th>#</th>
-                <th>DRG nome</th>
+                <th>DRG nom </th>
                 <th>Image</th>
                 <th>Status</th>
-                <th>Matière</th>
-                <th>Epaisseur</th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('material')" role="button" href="#">Matière @include('include.sort-icon', ['field' => 'material'])</a>
+                </th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('thickness')" role="button" href="#">Epaisseur @include('include.sort-icon', ['field' => 'thickness'])</a>
+                </th>
                 <th>Nombre de tôle</th>
                 <th>Temps unitaire</th>
                 <th>Temps Total</th>
@@ -17,7 +29,7 @@
         </thead>
         <tbody>
             @php
-                $totalTime = 0.0000001;
+                $totalTime = 0;
             @endphp
 
             @forelse ($DRGList as $DRG)
@@ -65,7 +77,7 @@
                 <th></th>
                 <th></th>
                 <th>Total :</th>
-                <th>{{ round($totalTime,2) }} h</th>
+                <th>@if ($totalTime > 0) {{ round($totalTime,2) }} h @endif</th>
                 <th></th>
                 <th></th>
             </tr>

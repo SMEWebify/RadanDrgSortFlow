@@ -88,18 +88,18 @@
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 ["Mois", "Total heure", { role: "style" } ],
-                ["Janvier", 8.94, 'green'],
-                ["Février", 10.49, ''],
-                ["Mars", 39.30, 'green'],
-                ["Avril", 21.45, ''],
-                ["Mai", 21.45, 'green'],
-                ["Juin", 21.45, ''],
-                ["Juillet", 21.45, 'green'],
-                ["Août", 21.45, ''],
-                ["Septembre", 21.45, 'green'],
-                ["Octobre", 51.45, ''],
-                ["Novembre", 51.45, 'green'],
-                ["Decembre", 41.45, '']
+                ["Janvier", {{ $data['janvier_count'][0]->total_time }}, 'green'],
+                ["Février", {{ $data['fevrier_count'][0]->total_time  }}, ''],
+                ["Mars", {{ $data['mars_count'][0]->total_time  }}, 'green'],
+                ["Avril", {{ $data['avril_count'][0]->total_time  }}, ''],
+                ["Mai", {{ $data['mai_count'][0]->total_time  }}, 'green'],
+                ["Juin", {{ $data['juin_count'][0]->total_time  }}, ''],
+                ["Juillet", {{ $data['juillet_count'][0]->total_time  }}, 'green'],
+                ["Août", {{ $data['aout_count'][0]->total_time  }}, ''],
+                ["Septembre", {{ $data['septembre_count'][0]->total_time  }}, 'green'],
+                ["Octobre", {{ $data['octobre_count'][0]->total_time  }}, ''],
+                ["Novembre", {{ $data['novembre_count'][0]->total_time  }}, 'green'],
+                ["Decembre", {{ $data['decembre_count'][0]->total_time  }}, '']
             ]);
 
             var view = new google.visualization.DataView(data);

@@ -25,6 +25,11 @@ Route::get('/tobeplanned', 'App\Http\Controllers\DRGController@tobeplanned')->mi
 Route::get('/cut', 'App\Http\Controllers\DRGController@cut')->middleware(['auth'])->name('cut');
 Route::get('/delete', 'App\Http\Controllers\DRGController@delete')->middleware(['auth'])->name('delete');
 
+Route::match(
+    ['get', 'post'],
+    '/navbar/search',
+    'App\Http\Controllers\SearchController@showNavbarSearchResults'
+);
 
 require __DIR__.'/auth.php';
 

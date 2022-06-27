@@ -1,15 +1,28 @@
 <div>
     @include('include.alert-result')
+    <div class="card-body">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
+            </div>
+            <input type="text" class="form-control" wire:model="search" placeholder="Chercher une imbrication">
+        </div>
+    </div>
     <table class="table table-striped projects">
         <thead>
             <tr>
                 <th>#</th>
-                <th>DRG nome</th>
+                <th>DRG nom </th>
                 <th>Image</th>
                 <th>Programme Progress</th>
                 <th>Status</th>
-                <th>Matière</th>
-                <th>Epaisseur</th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('material')" role="button" href="#">Matière @include('include.sort-icon', ['field' => 'material'])</a>
+                </th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('thickness')" role="button" href="#">Epaisseur @include('include.sort-icon', ['field' => 'thickness'])</a>
+                </th>
+                <th></th>
                 <th>Nombre de tôle</th>
                 <th>Nombre de tôle coupée</th>
                 <th>Temps unitaire</th>
@@ -44,7 +57,7 @@
                             </div>
                     </div>
                     <small>
-                        {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}% Complete
+                        {{ round($DRG->sheet_qty_done/$DRG->sheet_qty*100,2) }}% Complete
                     </small>
                 </td>
                 <td class="project-state">
@@ -102,25 +115,41 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th>Programme Progress</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>Nombre de tôle</th>
+                <th>Nombre de tôle coupée</th>
+                <th></th>
+                <th>Temps Total</th>
+                <th>Temps Restant</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
                 <td class="project_progress">
-                    <div class="progress progress-sm">
-                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ 100-($totalRemaningTime/$totalTime*100) }}" 
-                                                                            aria-valuemin="0" 
-                                                                            aria-valuemax="100" 
-                                                                            style="width: {{ 100-($totalRemaningTime/$totalTime*100) }}%">
-                    </div>
-                    
-                    </div>
-                    <small>
-                        {{ round(100-($totalRemaningTime/$totalTime*100),2) }}% Complete
-                    </small>
+                    @if ($totalTime > 0) 
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ 100-($totalRemaningTime/$totalTime*100) }}" 
+                                                                                    aria-valuemin="0" 
+                                                                                    aria-valuemax="100" 
+                                                                                    style="width: {{ 100-($totalRemaningTime/$totalTime*100) }}%">
+                            </div>
+                        </div>
+                        <small>
+                                {{ round(100-($totalRemaningTime/$totalTime*100),2) }}% Complete
+                        </small>
+                    @endif
                 </td>
                 <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>Total :</th>
+                <th></th>
                 <th>{{ $totalTime }} h</th>
                 <th>{{ $totalRemaningTime }} h</th>
                 <th></th>

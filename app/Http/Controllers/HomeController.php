@@ -39,6 +39,19 @@ class HomeController extends Controller
                                     ->groupByRaw('material')
                                     ->get();
 
+        $data['janvier_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '01')->whereYear('created_at', $CurentYear)->get();
+        $data['fevrier_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '02')->whereYear('created_at', $CurentYear)->get();
+        $data['mars_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '03')->whereYear('created_at', $CurentYear)->get();
+        $data['avril_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '04')->whereYear('created_at', $CurentYear)->get();
+        $data['mai_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '05')->whereYear('created_at', $CurentYear)->get();
+        $data['juin_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '06')->whereYear('created_at', $CurentYear)->get();
+        $data['juillet_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '07')->whereYear('created_at', $CurentYear)->get();
+        $data['aout_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '08')->whereYear('created_at', $CurentYear)->get();
+        $data['septembre_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '09')->whereYear('created_at', $CurentYear)->get();
+        $data['octobre_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '10')->whereYear('created_at', $CurentYear)->get();
+        $data['novembre_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '11')->whereYear('created_at', $CurentYear)->get();
+        $data['decembre_count'] = DB::table('drgs')->select(DB::raw('SUM(sheet_qty*unit_time) as total_time'))->whereMonth('created_at', '12')->whereYear('created_at', $CurentYear)->get();
+
         return view('home')->with('data',$data);
     }
 }

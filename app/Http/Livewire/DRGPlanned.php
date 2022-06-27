@@ -30,10 +30,14 @@ class DRGPlanned extends Component
     public function render()
     {
         $DRGList = $this->DRGList = Drg::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                                        ->where('statu', 2)
-                                        ->Orwhere('statu', 3)
-                                        ->Orwhere('statu', 4)
-                                        ->Orwhere('statu', 7)->get();
+                                        ->where('drg_name','like', '%'.$this->search.'%')
+                                        ->where(function($q){
+                                                $q->where('statu', 2)
+                                                ->Orwhere('statu', 3)
+                                                ->Orwhere('statu', 4)
+                                                ->Orwhere('statu', 7);
+                                            })
+                                        ->get();
                                         
         return view('livewire.d-r-g-planned', [
             'DRGList' => $DRGList,

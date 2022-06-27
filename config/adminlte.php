@@ -227,9 +227,12 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type'         => 'navbar-search',
-            'text'         => 'search',
-            'topnav_right' => true,
+            'type'          => 'navbar-search',
+            'text'          => 'search',        
+            'topnav'        => true,
+            'url'           => 'navbar/search',
+            'method'        => 'post', 
+            'input_name'    => 'searchVal' ,
         ],
         [
             'type'         => 'fullscreen-widget',
@@ -266,12 +269,12 @@ return [
             'icon_color' => 'red',
             'url'        => 'delete',
         ],
-        ['header' => 'GLOBAL SETTING'],
+        /*['header' => 'GLOBAL SETTING'],
         [
             'text' => 'settings',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
-        ],
+        ],*/
     ],
 
     /*

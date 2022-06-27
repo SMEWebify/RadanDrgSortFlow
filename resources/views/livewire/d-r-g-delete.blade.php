@@ -4,12 +4,16 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>DRG nome</th>
+                <th>DRG nom </th>
                 <th>Image</th>
                 <th>Programme Progress</th>
                 <th>Status</th>
-                <th>Matière</th>
-                <th>Epaisseur</th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('material')" role="button" href="#">Matière @include('include.sort-icon', ['field' => 'material'])</a>
+                </th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('thickness')" role="button" href="#">Epaisseur @include('include.sort-icon', ['field' => 'thickness'])</a>
+                </th>
                 <th>Nombre de tôle</th>
                 <th>Nombre de tôle coupée</th>
                 <th>Temps unitaire</th>
@@ -40,7 +44,7 @@
                         </div>
                     </div>
                     <small>
-                        {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}% Complete
+                        {{ round($DRG->sheet_qty_done/$DRG->sheet_qty*100,2) }}% Complete
                     </small>
                 </td>
                 <td class="project-state">
