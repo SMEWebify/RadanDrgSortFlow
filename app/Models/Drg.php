@@ -9,7 +9,7 @@ class Drg extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['drg_name','file_path', 'material', 'thickness','sheet_qty','sheet_qty_done', 'unit_time', 'statu','comment'];
+    protected $fillable = ['drg_name','file_path', 'material', 'thickness','sheet_qty','sheet_qty_done', 'unit_time', 'real_full_time', 'statu','comment'];
 
     public function TotalTime()
     {
@@ -18,7 +18,12 @@ class Drg extends Model
 
     public function RemaningTotalTime()
     {
-        return round($this->unit_time*($this->sheet_qty-$this->sheet_qty_done),2);
+        return round($this->TotalTime()-$this->real_full_time,2);
+    }
+
+    public function Advencemnt()
+    {
+        return round($this->real_full_time/$this->TotalTime()*100,2);
     }
 
     public function GetPrettyCreatedAttribute()

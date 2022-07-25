@@ -16,6 +16,7 @@ class DRGPlanned extends Component
     public $sortAsc = false; // default sort direction
     
     public $DRGList;
+    public $real_full_time;
 
     public function sortBy($field)
     {
@@ -44,15 +45,17 @@ class DRGPlanned extends Component
         ]);
     }
 
-    public function up($idStatu){
+    public function up($idStatu, $unitTime){
         // Update line
         Drg::find($idStatu)->increment('sheet_qty_done',1);
+        Drg::find($idStatu)->increment('real_full_time', $unitTime);
         Drg::find($idStatu)->update(['statu'=>3]);
     }
 
-    public function down($idStatu){
+    public function down($idStatu, $unitTime){
         // Update line
         Drg::find($idStatu)->decrement('sheet_qty_done',1);
+        Drg::find($idStatu)->decrement('real_full_time', $unitTime);
     }
 
     
@@ -75,5 +78,13 @@ class DRGPlanned extends Component
         // Update line
         Drg::find($idStatu)->update(['statu'=>5]);
         session()->flash('warning','Ligne finie');
+    }
+
+    public function AddTime($id){
+        Drg::find($id)->increment('real_full_time', $this->real_full_time);
+    }
+    
+    public function ChangeTime($id){
+        Drg::find($id)->update(['real_full_time'=>$this->real_full_time]);
     }
 }

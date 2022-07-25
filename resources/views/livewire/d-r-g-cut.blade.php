@@ -38,11 +38,11 @@
                 </td>
                 <td class="project_progress">
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}%">
+                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $DRG->Advencemnt() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $DRG->Advencemnt() }}%">
                         </div>
                     </div>
                     <small>
-                        {{ $DRG->sheet_qty_done/$DRG->sheet_qty*100 }}% Complete
+                        {{ $DRG->Advencemnt() }}% Complete
                     </small>
                 </td>
                 <td class="project-state">
@@ -62,9 +62,9 @@
                 @endphp
 
                 <td class="project-actions">
-                    <a class="btn btn-warning btn-sm" href="#" wire:click="restorToPlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer planifiée</a>
-                    <a class="btn btn-info btn-sm" href="#" wire:click="restorToBePlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer à planifiée</a>
-                    <a class="btn btn-danger btn-sm" href="#" wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</a> </td>
+                    <button class="btn btn-warning btn-sm"  wire:click="restorToPlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer planifiée</button>
+                    <button class="btn btn-info btn-sm"  wire:click="restorToBePlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer à planifiée</button>
+                    <button class="btn btn-danger btn-sm"  wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</button> </td>
             </tr>
             @empty
                 <tr>

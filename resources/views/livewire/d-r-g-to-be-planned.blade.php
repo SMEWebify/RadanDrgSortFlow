@@ -56,9 +56,9 @@
                 @endphp
 
                 <td class="project-actions">
-                    <a class="btn btn-warning btn-sm" href="#" wire:click="run({{$DRG->id}})"><i class="fas fa-folder"></i>Planifier</a>
-                    <a class="btn btn-info btn-sm" href="#"><i class="fas fa-pencil-alt"></i>Edit</a>
-                    <a class="btn btn-danger btn-sm" href="#" wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</a>
+                    <button class="btn btn-warning btn-sm"  wire:click="run({{$DRG->id}})"><i class="fas fa-folder"></i>Planifier</button>
+                    <button class="btn btn-info btn-sm" ><i class="fas fa-pencil-alt"></i>Edit</button>
+                    <button class="btn btn-danger btn-sm"  wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</button>
                 </td>
             </tr>
             @empty

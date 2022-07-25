@@ -22,6 +22,7 @@ class CreateDrgsTable extends Migration
             $table->integer('sheet_qty');
             $table->integer('sheet_qty_done')->default(0);
             $table->decimal('unit_time');
+            $table->decimal('real_full_time')->default(0);
             $table->integer('statu')->default(1);
             #1 = A planifier
             #2 = Planifier

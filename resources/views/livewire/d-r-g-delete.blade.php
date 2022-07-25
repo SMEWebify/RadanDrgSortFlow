@@ -64,9 +64,9 @@
                 @endphp
 
                 <td class="project-actions">
-                    <a class="btn btn-success btn-sm" href="#" wire:click="restorToCut({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer coupée</a>
-                    <a class="btn btn-warning btn-sm" href="#" wire:click="restorToPlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer planifiée</a>
-                    <a class="btn btn-info btn-sm" href="#" wire:click="restorToBePlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer à planifiée</a>
+                    <button class="btn btn-success btn-sm"  wire:click="restorToCut({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer coupée</button>
+                    <button class="btn btn-warning btn-sm"  wire:click="restorToPlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer planifiée</button>
+                    <button class="btn btn-info btn-sm"  wire:click="restorToBePlanned({{$DRG->id}})"><i class="fas fa-folder"></i>Restaurer à planifiée</button>
                 </td>
             </tr>
             @empty
