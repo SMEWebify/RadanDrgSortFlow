@@ -1,9 +1,5 @@
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Direct Chat</h3>
-    </div>
-        
-    <div class="card-body">
+<div>
+    <x-adminlte-card title="Direct Chat" theme="warning" icon="fas fa-lg fa-bell" collapsible maximizable>
         <div class="direct-chat-messages">
             @php 
                 $styleChatMsg="";
@@ -58,14 +54,14 @@
             </div>
             @endforelse
         </div> 
-    </div>
     <div class="card-footer">
         <div class="input-group">
-            <input type="text" wire:model="label" name="label"  id="label" placeholder="Message ..." class="form-control">
+            <input type="text" wire:model.live="label" name="label"  id="label" placeholder="Message ..." class="form-control">
             <span class="input-group-append">
                 <button type="button" wire:click="storeMessage()" class="btn btn-primary">Envoyer</button>
             </span>
         </div>
         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
     </div>
+</x-adminlte-card>
 </div>

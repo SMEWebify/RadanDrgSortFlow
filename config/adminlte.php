@@ -247,6 +247,12 @@ return [
             'icon'        => 'far fa-fw fa-file',
             'label_color' => 'success',
         ],
+        [
+            'text'        => 'Affecter machine',
+            'url'         => 'kanban-machine',
+            'icon'        => 'far fa-fw fa-file',
+            'label_color' => 'success',
+        ],
         ['header' => 'DRG LIST'],
         [
             'text'       => 'A plannifié',
@@ -269,12 +275,17 @@ return [
             'icon_color' => 'red',
             'url'        => 'delete',
         ],
-        /*['header' => 'GLOBAL SETTING'],
+        ['header' => 'DRG'],
         [
-            'text' => 'settings',
-            'url'  => 'admin/settings',
+            'text' => 'Drg',
+            'url'  => 'drgs',
             'icon' => 'fas fa-fw fa-user',
-        ],*/
+        ],
+        [
+            'text' => 'Machines',
+            'url'  => 'machines',
+            'icon' => 'fas fa-fw fa-user',
+        ],
     ],
 
     /*
@@ -313,21 +324,21 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
                 ],
                 [
                     'type' => 'js',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
                 ],
                 [
                     'type' => 'css',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
                 ],
             ],

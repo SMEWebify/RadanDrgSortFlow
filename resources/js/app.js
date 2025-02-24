@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
-import ExampleComponent from './components/ExampleComponent.vue';
+import Kanban from './components/Kanban.vue';
+
 
 const app = createApp({});
-app.component('example-component', ExampleComponent);
+app.component('kanban', Kanban);
 app.mount('#app');

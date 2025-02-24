@@ -28,28 +28,19 @@
 
 <div class="row">
     <div class="col-lg-6 col-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ion ion-clipboard mr-1"></i>Total des heures par mois</h3>
-            </div>
-            <div class="card-body">
-                <div id="columnchart_values" style=" height: 300px;"></div>
-            </div>
-        </div>
+        <x-adminlte-card title="Total des heures par mois" theme="info" icon="fas fa-lg fa-bell" collapsible removable maximizable>
+            <div id="columnchart_values" style=" height: 300px;"></div>
+        </x-adminlte-card>
 
         @livewire('chat')
     </div>
 
     <div class="col-lg-6 col-6">
         @livewire('to-do-list')
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ion ion-clipboard mr-1"></i>Total des heures par matière :</h3>
-            </div>
-            <div class="card-body">
+        
+            <x-adminlte-card title="Total des heures par matière :" theme="orange" icon="fas fa-lg fa-bell" collapsible removable maximizable>
                 <div id="piechart" style=" height: 400px;"></div>
-            </div>
-        </div>
+            </x-adminlte-card>
     </div>
 </div>
     

@@ -5,7 +5,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
             </div>
-            <input type="text" class="form-control" wire:model="search" placeholder="Chercher une imbrication">
+            <input type="text" class="form-control" wire:model.live="search" placeholder="Chercher une imbrication">
         </div>
     </div>
     <table class="table table-striped projects">
@@ -57,7 +57,7 @@
 
                 <td class="project-actions">
                     <button class="btn btn-warning btn-sm"  wire:click="run({{$DRG->id}})"><i class="fas fa-folder"></i>Planifier</button>
-                    <button class="btn btn-info btn-sm" ><i class="fas fa-pencil-alt"></i>Edit</button>
+                    <a href="{{ route('drgs.edit', $DRG->id) }}" class="btn btn-warning btn-sm">Éditer</a>
                     <button class="btn btn-danger btn-sm"  wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i>Delete</button>
                 </td>
             </tr>

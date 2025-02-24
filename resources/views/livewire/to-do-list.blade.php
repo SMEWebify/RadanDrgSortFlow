@@ -36,7 +36,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-list"></i></span>
             </div>
-            <input type="text" class="form-control" placeholder="To Do" wire:model="label" name="label"  id="label">
+            <input type="text" class="form-control" placeholder="To Do" wire:model.live="label" name="label"  id="label">
             <button type="button"  wire:click="storeTodo()" class="btn btn-primary float-right"><i class="fas fa-plus"></i> Add item</button>
         </div>
         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror

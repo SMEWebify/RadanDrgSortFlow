@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Drg;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class DRGCut extends Component
+class DRGToBePlanned extends Component
 {
-
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
@@ -31,27 +30,24 @@ class DRGCut extends Component
     public function render()
     {
         $DRGList = $this->DRGList = Drg::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                                        ->where('statu', 5)->get();
+                                        ->where('statu', 1)
+                                        ->where('drg_name','like', '%'.$this->search.'%')
+                                        ->get();
 
-        return view('livewire.d-r-g-cut', [
+        return view('livewire.d-r-g-to-be-planned', [
             'DRGList' => $DRGList,
         ]);
+    }
+    
+    public function run($idStatu){
+        // Update line
+        Drg::find($idStatu)->update(['statu'=>2]);
+        session()->flash('success','Ligne ajoutée à la liste des DRG à couper.');
     }
 
     public function delete($idStatu){
         // Update line
         Drg::find($idStatu)->update(['statu'=>6]);
-    }
-
-    public function restorToPlanned($idStatu){
-        // Update line
-        Drg::find($idStatu)->update(['statu'=>2]);
-        session()->flash('success','ligne restaurée planifiée');
-    }
-
-    public function restorToBePlanned($idStatu){
-        // Update line
-        Drg::find($idStatu)->update(['statu'=>1]);
-        session()->flash('success','ligne restaurée à planifiée');
+        session()->flash('success','Ligne ajoutée à la corbeille');
     }
 }

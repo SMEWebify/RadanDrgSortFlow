@@ -5,7 +5,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
             </div>
-            <input type="text" class="form-control" wire:model="search" placeholder="Chercher une imbrication">
+            <input type="text" class="form-control" wire:model.live="search" placeholder="Chercher une imbrication">
         </div>
     </div>
     <table class="table table-striped projects">
@@ -103,7 +103,7 @@
                                     <div class="row">
                                         <h2> Ajout d'un temps de production au temps actuel : {{ $DRG->real_full_time }} h </h2>
                                         <div class="input-group">
-                                            <input type="number" wire:model="real_full_time" name="real_full_time"  id="real_full_time" placeholder="Time ..." class="form-control">
+                                            <input type="number" wire:model.live="real_full_time" name="real_full_time"  id="real_full_time" placeholder="Time ..." class="form-control">
                                             <span class="input-group-append">
                                                 <button type="button" wire:click="AddTime({{ $DRG->id }})" class="btn btn-primary">Add time</button>
                                             </span>
@@ -113,7 +113,7 @@
                                     <div class="row">
                                         <h2> Réinitialisation du temps : </h2>
                                         <div class="input-group">
-                                            <input type="number" wire:model="real_full_time" name="real_full_time"  id="real_full_time" placeholder="Time ..." class="form-control">
+                                            <input type="number" wire:model.live="real_full_time" name="real_full_time"  id="real_full_time" placeholder="Time ..." class="form-control">
                                             <span class="input-group-append">
                                                 <button type="button" wire:click="ChangeTime({{ $DRG->id }})"  class="btn btn-primary">Change time</button>
                                             </span>
@@ -141,7 +141,7 @@
                     @endif
                 </td>
                 <td class="project-actions">
-                    <button class="btn btn-info btn-sm" ><i class="fas fa-pencil-alt"></i>Edit</button>
+                    <a href="{{ route('drgs.edit', $DRG->id) }}" class="btn btn-warning btn-sm">Éditer</a>
                     <button class="btn btn-danger btn-sm" wire:click="delete({{$DRG->id}})"><i class="fas fa-trash"></i> Delete</button>
                 </td>
             </tr>
