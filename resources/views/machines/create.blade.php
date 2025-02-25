@@ -39,6 +39,9 @@
 
                     <!-- Zone machine Y -->
                     <x-adminlte-input name="zone_y" label="Zone Machine Y" placeholder="Entrez la position Y" required />
+                    
+                    <!-- Sélecteur de couleur -->
+                    <x-adminlte-input name="color" label="Couleur" placeholder="Choisissez une couleur" type="color" value="#ff0000" required />
 
                     <!-- Image -->
                     <x-adminlte-input-file name="image" label="Image" placeholder="Choisir une image..." />

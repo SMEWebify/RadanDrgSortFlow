@@ -179,7 +179,7 @@ class DRGController extends Controller
      */
     public function indexKanban()
     {
-        return Machine::with('drgs')->get(); // Inclut les DRGs assignés à chaque machine
+        return Machine::active()->with('drgs')->get(); // Inclut les DRGs assignés à chaque machine
     }
     
 }

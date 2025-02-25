@@ -30,6 +30,10 @@
 
                 <!-- Capacité horaire -->
                 <x-adminlte-input name="capacity" label="Capacité Horaire" value="{{ $machine->capacity }}" required />
+
+                <!-- Sélecteur de couleur -->
+                <x-adminlte-input name="color" label="Couleur" placeholder="Choisissez une couleur" type="color" value="{{ $machine->color }}" required />
+
             </div>
 
             <div class="col-md-6">
@@ -45,7 +49,7 @@
                 <!-- Image -->
                 <x-adminlte-input-file name="image" label="Image" placeholder="Choisir une nouvelle image..." />
                 @if ($machine->image)
-                    <img src="{{ asset('storage/' . $machine->image) }}" alt="Image de la machine" class="img-fluid mt-2">
+                <img src="{{ asset('images/machines/' . $machine->image) }}" alt="Image de la machine" class="img-fluid">
                 @endif
             </div>
         </div>

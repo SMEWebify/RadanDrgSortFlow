@@ -28,12 +28,20 @@ class MachineController extends Controller
             'hourly_rate' => 'required|numeric',
             'zone_x' => 'required|numeric',
             'zone_y' => 'required|numeric',
-            'image' => 'nullable|image',
+            'color' => 'required|unique:machines',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
 
-        $imagePath = $request->file('image') ? $request->file('image')->store('machines') : null;
-
-        Machine::create(array_merge($validated, ['image' => $imagePath]));
+        if($request->file('image')){
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->image->move(public_path('images/machines'), $filename);
+        }
+        else{
+            $filename = null;
+        }
+        
+        Machine::create(array_merge($validated, ['image' => $filename]));
 
         return redirect()->route('machines.index')->with('success', 'Machine ajoutée avec succès');
     }
@@ -58,13 +66,17 @@ class MachineController extends Controller
             'hourly_rate' => 'required|numeric',
             'zone_x' => 'required|numeric',
             'zone_y' => 'required|numeric',
-            'image' => 'nullable|image',
+            'color' => 'required|unique:machines',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
 
-        if ($request->file('image')) {
-            $imagePath = $request->file('image')->store('machines');
-            $machine->update(array_merge($validated, ['image' => $imagePath]));
-        } else {
+        if($request->file('image')){
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->image->move(public_path('images/machines'), $filename);
+            $machine->update(array_merge($validated, ['image' => $filename]));
+        }
+        else{
             $machine->update($validated);
         }
 
@@ -76,6 +88,18 @@ class MachineController extends Controller
         $machine->delete();
         return redirect()->route('machines.index')->with('success', 'Machine supprimée avec succès');
     }
+    public function toggleMachineStatus($id)
+    {
+        $machine = Machine::find($id);
+    
+        if ($machine->is_active) {
+            $machine->deactivate();
+        } else {
+            $machine->activate();
+        }
+    
+        return redirect()->back()->with('status', 'Machine status updated!');
+    }
 
     public function getMachineLoad(Request $request)
     {
@@ -84,7 +108,7 @@ class MachineController extends Controller
         $endDate = $request->input('end_date', now()->endOfWeek()); // default end of week
 
         // Fetch machines with their DRGs for the given date range
-        $machines = Machine::with(['drgs' => function ($query) use ($startDate, $endDate) {
+        $machines = Machine::active()->with(['drgs' => function ($query) use ($startDate, $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }])->get();
 

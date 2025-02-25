@@ -8,7 +8,7 @@
 
 @section('content')
     <x-adminlte-card title="DRG liste à planifier" theme="warning" icon="fas fa-lg fa-bell" collapsible maximizable>
-        <form action="{{ route('drgs.update', $drg->drg_name) }}" method="POST">
+        <form action="{{ route('drgs.update', $drg->id) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="form-group">

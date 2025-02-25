@@ -4,7 +4,7 @@
         <div class="kanban-column card" :class="{ 'active': selectedMachineId === null }">
             <div class="card-header-first">
                 <h3 class="card-title">
-                    DRGs sans machine ({{ remainingTotalTimeForDrgsWithoutMachine() }} min)
+                    DRGs sans machine ({{ remainingTotalTimeForDrgsWithoutMachine() }} heures)
                 </h3>
             </div>
             <div class="card-body">
@@ -14,15 +14,23 @@
                     class="kanban-card"
                     @dragstart="dragStart(drg)"
                     draggable="true"
-                >
-                <img 
-                    :src="`/images/${drg.drg_name}.png`" 
-                    alt="Imbrication" 
-                    class="kanban-card-image"
-                />
+                    >
+                    <img 
+                        :src="`/images/${drg.drg_name}.png`" 
+                        alt="Imbrication" 
+                        class="kanban-card-image"
+                    />
                     <p>{{ drg.drg_name }}</p>
+
                     <!-- Afficher le statut avec la classe Bootstrap -->
                     <span :class="getStatuLabel(drg.statu).class">{{ getStatuLabel(drg.statu).text }}</span>
+                    
+                    <!-- Afficher le temps total et le temps restant -->
+                    <p>Temps total : {{ getTotalTime(drg) }} heures</p>
+                    <p>Temps restant : {{ getRemainingTime(drg) }} heures</p>
+                    
+                    <!-- Ajouter un lien vers le DRG -->
+                    <a :href="getDrgLink(drg)" class="btn btn-info btn-sm">Voir</a>
                 </div>
             </div>
         </div>
@@ -37,9 +45,9 @@
             :class="{ 'active': selectedMachineId === machine.id }" 
             @click="selectMachine(machine.id)" 
         >
-            <div class="card-header">
+            <div class="card-header" :style="{ backgroundColor: machine.color || 'grey' }">
                 <h3 class="card-title">
-                    {{ machine.name }} ({{ remainingTotalTimeForMachine(machine) }} min)
+                    {{ machine.name }} ({{ remainingTotalTimeForMachine(machine) }} heures)
                 </h3>
             </div>
             <div class="card-body">
@@ -50,15 +58,22 @@
                     @dragstart="dragStart(drg)"
                     draggable="true"
                 >
-                <img 
-                    :src="`/images/${drg.drg_name}.png`" 
-                    alt="Imbrication" 
-                    class="kanban-card-image"
-                />
+                    <img 
+                        :src="`/images/${drg.drg_name}.png`" 
+                        alt="Imbrication" 
+                        class="kanban-card-image"
+                    />
                     <p>{{ drg.drg_name }}</p>
+
                     <!-- Afficher le statut avec la classe Bootstrap -->
                     <span :class="getStatuLabel(drg.statu).class">{{ getStatuLabel(drg.statu).text }}</span>
-    
+                    
+                    <!-- Afficher le temps total et le temps restant -->
+                    <p>Temps total : {{ getTotalTime(drg) }} heures</p>
+                    <p>Temps restant : {{ getRemainingTime(drg) }} heures</p>
+                    
+                    <!-- Ajouter un lien vers le DRG -->
+                    <a :href="getDrgLink(drg)" class="btn btn-info btn-sm">Voir</a>
                 </div>
             </div>
         </div>
@@ -91,37 +106,68 @@ export default {
         allowDrop(event) {
             event.preventDefault();
         },
-        drop(event, machineId) {
+        drop(event, targetMachineId) {
             event.preventDefault();
             if (!this.selectedDrg) return;
-            
-            // Ajout du token CSRF dans les headers
+
+            const sourceMachineId = this.selectedDrg.machine_id;
+
+            // Si le DRG est déjà assigné à une machine, on l'enlève de la machine source
+            if (sourceMachineId !== null && sourceMachineId !== targetMachineId) {
+                const sourceMachine = this.machines.find(machine => machine.id === sourceMachineId);
+                if (sourceMachine) {
+                    const index = sourceMachine.drgs.findIndex(drg => drg.id === this.selectedDrg.id);
+                    if (index > -1) {
+                        sourceMachine.drgs.splice(index, 1); // Retirer le DRG de la machine source
+                    }
+                }
+            }
+
+            // Mettre à jour la machine cible via un appel API
             fetch(`/drg/${this.selectedDrg.id}/assign-machine`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({ machine_id: machineId })
+                body: JSON.stringify({ machine_id: targetMachineId })
             })
             .then(response => response.json())
-            .then(this.updateDrgsAfterAssign)
+            .then(updatedDrg => this.updateDrgsAfterAssign(updatedDrg, targetMachineId))
             .catch(error => console.error("Erreur d'affectation:", error));
         },
-        updateDrgsAfterAssign(updatedDrg) {
-            // Retirer le DRG de la liste "sans machine"
+        updateDrgsAfterAssign(updatedDrg, targetMachineId) {
+            // Mettre à jour la liste des DRGs sans machine si besoin
             const indexWithoutMachine = this.drgsWithoutMachine.findIndex(drg => drg.id === updatedDrg.id);
             if (indexWithoutMachine > -1) {
                 this.drgsWithoutMachine.splice(indexWithoutMachine, 1);
             }
-            // Mettre à jour la liste des machines
-            const machine = this.machines.find(machine => machine.id === updatedDrg.machine_id);
-            if (machine && !machine.drgs.find(drg => drg.id === updatedDrg.id)) {
-                machine.drgs.push(updatedDrg);
+
+            // Trouver la machine cible
+            const targetMachine = this.machines.find(machine => machine.id === targetMachineId);
+            if (targetMachine) {
+                // Recréer un nouveau tableau de DRGs pour la machine cible
+                targetMachine.drgs = [...targetMachine.drgs, updatedDrg];
             }
+
+            // Assurer que l'ID de la machine du DRG soit mis à jour
+            this.selectedDrg.machine_id = targetMachineId;
+
+            // Remettre selectedDrg à null après l'assignation
+            this.selectedDrg = null;
         },
         selectMachine(machineId) {
             this.selectedMachineId = machineId;
+        },
+        getTotalTime(drg) {
+            return Math.round(drg.unit_time * drg.sheet_qty * 100) / 100;
+        },
+        getRemainingTime(drg) {
+            const totalTime = this.getTotalTime(drg);
+            return Math.round((totalTime - drg.real_full_time) * 100) / 100;
+        },
+        getDrgLink(drg) {
+            return `/drgs/${drg.id}`; // Le lien vers la page de détail
         },
         getStatuLabel(statu) {
             switch (statu) {
@@ -147,8 +193,13 @@ export default {
             return this.drgsWithoutMachine.reduce((total, drg) => total + drg.remaining_time, 0);
         },
         remainingTotalTimeForMachine(machine) {
-            return machine.drgs.reduce((total, drg) => total + drg.remaining_time, 0);
-        },
+        return machine.drgs.reduce((total, drg) => {
+            // Calcul de remaining_time en fonction des données du modèle
+            const remainingTime = (drg.unit_time * drg.sheet_qty) - drg.real_full_time;
+            // Ajouter au total général
+            return total + Math.round(remainingTime * 100) / 100; // arrondi à 2 décimales
+        }, 0);
+    }
     }
 };
 </script>
@@ -163,7 +214,7 @@ export default {
 }
 
 .kanban-column {
-    flex: 0 0 300px;
+    flex: 0 0 400px;
     background-color: #2A2F3C;
     border: 1px solid #3A3F4C;
     border-radius: 8px;

@@ -11,7 +11,10 @@
                 <th>
                     <a class="btn btn-secondary" wire:click.prevent="sortBy('material')" role="button" href="#">Matière @include('include.sort-icon', ['field' => 'material'])</a>
                 </th>
-                <th>Epaisseur</th>
+                <th>
+                    <a class="btn btn-secondary" wire:click.prevent="sortBy('thickness')" role="button" href="#">Epaisseur @include('include.sort-icon', ['field' => 'thickness'])</a>
+                </th>
+                <th>Machine</th>
                 <th>Nombre de tôle</th>
                 <th>Nombre de tôle coupée</th>
                 <th>Temps unitaire</th>
@@ -50,6 +53,7 @@
                 </td>
                 <td>{{ $DRG->material }}</td>
                 <td>{{ $DRG->thickness }}</td>
+                <td style="background-color: {{ $DRG->getMachineColor() }}">{{ $DRG->machine_name }}</td> 
                 <td>{{ $DRG->sheet_qty }}</td>
                 <td>{{ $DRG->sheet_qty_done }}</td>
                 <td>{{ $DRG->unit_time }} h</td>
@@ -68,7 +72,7 @@
             </tr>
             @empty
                 <tr>
-                    <td colspan="13">Aucun programme dans la corbeille<td>
+                    <td colspan="13">Aucun programme<td>
                 <tr>
             @endforelse
         </tbody>

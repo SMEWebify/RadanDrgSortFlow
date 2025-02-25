@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{machine}', [MachineController::class, 'destroy'])->name('destroy');
     });
 
+    Route::post('/machines/{id}/toggle-status', [MachineController::class, 'toggleMachineStatus'])->name('machines.toggleStatus');
     Route::get('/machine-load', [MachineController::class, 'getMachineLoad']);
     
 });

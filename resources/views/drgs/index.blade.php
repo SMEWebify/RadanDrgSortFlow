@@ -7,8 +7,10 @@
 @stop
 
 @section('content')
+    <x-adminlte-card theme="lime" theme-mode="outline">
+        <a href="{{ route('drgs.create') }}" class="btn btn-success mb-3">Ajouter un DRG</a>
+    </x-adminlte-card>
     <x-adminlte-card title="Liste des DRGs" theme="info" icon="fas fa-lg fa-bell" collapsible removable maximizable>
-        <a href="{{ route('drgs.create') }}" class="btn btn-primary mb-3">Ajouter un DRG</a>
 
         <table id="drgsTable" class="table table-bordered table-striped">
             <thead>

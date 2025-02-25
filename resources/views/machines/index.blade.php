@@ -4,10 +4,13 @@
 
 @section('content_header')
     <h1>Liste des Machines</h1>
-    <a href="{{ route('machines.create') }}" class="btn btn-success">Ajouter une Machine</a>
 @stop
 
 @section('content')
+    <x-adminlte-card theme="lime" theme-mode="outline">
+        <a href="{{ route('machines.create') }}" class="btn btn-success">Ajouter une Machine</a>
+    </x-adminlte-card>
+
     <x-adminlte-card title="Liste des Machines" theme="info" icon="fas fa-lg fa-bell" collapsible removable maximizable>
         <table id="machinesTable" class="table table-bordered table-striped">
             <thead>
@@ -17,6 +20,8 @@
                     <th>Type</th>
                     <th>Capacité Horaire</th>
                     <th>Taux Horaire</th>
+                    <th>Couleur</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -28,6 +33,12 @@
                         <td>{{ $machine->type }}</td>
                         <td>{{ $machine->capacity }}</td>
                         <td>{{ $machine->hourly_rate }}</td>
+                        <td style="background-color: {{ $machine->color }}">{{ $machine->color }}</td>
+                        <td>
+                            <span class="badge {{ $machine->is_active ? 'badge-success' : 'badge-danger' }}">
+                                {{ $machine->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
                         <td>
                             <a href="{{ route('machines.show', $machine->id) }}" class="btn btn-primary">Voir</a>
                             <a href="{{ route('machines.edit', $machine->id) }}" class="btn btn-warning">Éditer</a>

@@ -54,6 +54,17 @@ class Drg extends Model
         return $this->belongsTo(Machine::class);
     }
 
+    public function getMachineNameAttribute()
+    {
+        return $this->machine ? $this->machine->name : 'Aucune machine';
+    }
+
+    // Méthode pour récupérer la couleur de la machine ou gris par défaut
+    public function getMachineColor()
+    {
+        return $this->machine ? $this->machine->color ?? '#808080' : '#808080';  // Gris par défaut
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
