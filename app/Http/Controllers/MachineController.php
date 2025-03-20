@@ -88,6 +88,7 @@ class MachineController extends Controller
         $machine->delete();
         return redirect()->route('machines.index')->with('success', 'Machine supprimée avec succès');
     }
+
     public function toggleMachineStatus($id)
     {
         $machine = Machine::find($id);
@@ -101,33 +102,11 @@ class MachineController extends Controller
         return redirect()->back()->with('status', 'Machine status updated!');
     }
 
-    public function getMachineLoad(Request $request)
+    public function drgsEnCours(Machine $machine)
     {
-        // Date range for the planning (either daily or weekly)
-        $startDate = $request->input('start_date', now()->startOfWeek()); // default start of week
-        $endDate = $request->input('end_date', now()->endOfWeek()); // default end of week
+        // Récupérer les DRGs "En cours" (statu = 3) pour cette machine
+        $drgs = $machine->drgs()->whereIn('statu', [2, 3, 4 ,7 ])->get();
 
-        // Fetch machines with their DRGs for the given date range
-        $machines = Machine::active()->with(['drgs' => function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }])->get();
-
-        // Prepare data for each machine
-        $machineData = $machines->map(function ($machine) {
-            return [
-                'machine' => $machine->name,
-                'drgs' => $machine->drgs->map(function ($drg) {
-                    return [
-                        'drg_name' => $drg->drg_name,
-                        'total_time' => $drg->TotalTime(),
-                        'remaining_time' => $drg->RemaningTotalTime(),
-                        'advancement' => $drg->Advencemnt(),
-                        'created_at' => $drg->created_at->format('Y-m-d'), // group by day
-                    ];
-                }),
-            ];
-        });
-
-        return response()->json($machineData);
+        return view('machines.drgs-en-cours', compact('machine', 'drgs'));
     }
 }

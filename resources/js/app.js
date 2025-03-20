@@ -1,7 +1,12 @@
 import { createApp } from 'vue';
-import Kanban from './components/Kanban.vue';
-
+import KanbanMachine from './components/Kanban.vue';
+import KanbanStatut from './components/Kanban-statut.vue';
 
 const app = createApp({});
-app.component('kanban', Kanban);
+
+// Enregistrement du composant globalement
+app.component('kanban-machine', KanbanMachine);
+app.component('kanban-statut', KanbanStatut);
+
+// Monter l'application Vue dans le `div#app`
 app.mount('#app');

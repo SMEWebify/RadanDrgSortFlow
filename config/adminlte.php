@@ -225,7 +225,7 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
+        // 🔍 Recherche dans la barre de navigation
         [
             'type'          => 'navbar-search',
             'text'          => 'search',        
@@ -239,55 +239,66 @@ return [
             'topnav_right' => true,
         ],
 
-        // Sidebar items:
-        
+        // 📊 Tableau de bord
         [
             'text'        => 'Tableau de bord',
             'url'         => 'home',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'fas fa-tachometer-alt', // Icône de tableau de bord
             'label_color' => 'success',
         ],
+
+        ['header' => '📌 Gestion par Kanban'],
         [
             'text'        => 'Affecter machine',
             'url'         => 'kanban-machine',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'fas fa-industry', // Icône d'usine/machine
             'label_color' => 'success',
         ],
-        ['header' => 'DRG LIST'],
         [
-            'text'       => 'A plannifié',
+            'text'        => 'Statut kanban',
+            'url'         => 'kanban-statut',
+            'icon'        => 'fas fa-tasks', // Icône de gestion des tâches
+            'label_color' => 'warning',
+        ],
+
+        ['header' => '📋 Gestion par statut'],
+        [
+            'text'       => 'À planifier',
+            'icon'       => 'fas fa-calendar-plus', // Icône calendrier avec +
             'icon_color' => 'blue',
             'url'        => 'tobeplanned',
         ],
         [
-            'text'       => 'Plannifié',
+            'text'       => 'Planifié',
+            'icon'       => 'fas fa-calendar-check', // Icône calendrier avec check
             'icon_color' => 'yellow',
             'url'        => 'planned',
         ],
         [
             'text'       => 'Coupé',
+            'icon'       => 'fas fa-cut', // Icône ciseaux (pour découpe)
             'icon_color' => 'green',
             'url'        => 'cut',
         ],
-        
         [
             'text'       => 'Corbeille',
+            'icon'       => 'fas fa-trash', // Icône corbeille
             'icon_color' => 'red',
             'url'        => 'delete',
         ],
-        ['header' => 'DRG'],
+
+        ['header' => '📁 Listes'],
         [
-            'text' => 'Drg',
+            'text' => 'DRG',
             'url'  => 'drgs',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-file-alt', // Icône de fichier (document)
         ],
         [
             'text' => 'Machines',
             'url'  => 'machines',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-cogs', // Icône d'engrenages (machines)
         ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Menu Filters

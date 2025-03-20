@@ -26,18 +26,12 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/kanban-machine', [DRGController::class, 'kanbanMachine'])->name('kanban-machine');
+    Route::get('/kanban-statut', [DRGController::class, 'kanbanStatut'])->name('kanban-statut');
     Route::get('/planned', [DRGController::class, 'planned'])->name('planned');
     Route::get('/tobeplanned', [DRGController::class, 'tobeplanned'])->name('tobeplanned');
     Route::get('/cut', [DRGController::class, 'cut'])->name('cut');
     Route::get('/delete', [DRGController::class, 'delete'])->name('delete');
 
-    // API routes
-    Route::prefix('api')->group(function () {
-        Route::get('/drgs-without-machine', [DRGController::class, 'getDrgsWithoutMachine']);
-        Route::get('/machines', [MachineController::class, 'index']);
-    });
-    // Route pour assigner un DRG à une machine avec middleware
-    Route::put('/drg/{drg}/assign-machine', [DrgController::class, 'assignMachine'])->middleware('auth');
 
     // DRG routes
     Route::prefix('drgs')->name('drgs.')->group(function () {
@@ -59,12 +53,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{machine}/edit', [MachineController::class, 'edit'])->name('edit');
         Route::put('/{machine}', [MachineController::class, 'update'])->name('update');
         Route::delete('/{machine}', [MachineController::class, 'destroy'])->name('destroy');
+    
+        Route::post('/{id}/toggle-status', [MachineController::class, 'toggleMachineStatus'])->name('toggleStatus');
     });
-
-    Route::post('/machines/{id}/toggle-status', [MachineController::class, 'toggleMachineStatus'])->name('machines.toggleStatus');
-    Route::get('/machine-load', [MachineController::class, 'getMachineLoad']);
     
 });
+
+Route::get('/machines/{machine}/drgs-en-cours', [MachineController::class, 'drgsEnCours'])->name('machines.drgsEnCours');
 
 Route::match(['get', 'post'], '/navbar/search', [SearchController::class, 'showNavbarSearchResults']);
 

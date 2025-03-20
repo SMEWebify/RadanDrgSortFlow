@@ -1,175 +1,150 @@
 <template>
-    <div class="kanban-board">
-        <!-- Colonne sans machine -->
-        <div class="kanban-column card" :class="{ 'active': selectedMachineId === null }">
-            <div class="card-header-first">
-                <h3 class="card-title">
-                    DRGs sans machine ({{ remainingTotalTimeForDrgsWithoutMachine() }} heures)
-                </h3>
-            </div>
-            <div class="card-body">
-                <div
-                    v-for="drg in drgsWithoutMachine"
-                    :key="drg.id"
-                    class="kanban-card"
-                    @dragstart="dragStart(drg)"
-                    draggable="true"
-                    >
-                    <img 
-                        :src="`/images/${drg.drg_name}.png`" 
-                        alt="Imbrication" 
-                        class="kanban-card-image"
-                    />
-                    <p>{{ drg.drg_name }}</p>
+  <div class="kanban-container">
 
-                    <!-- Afficher le statut avec la classe Bootstrap -->
-                    <span :class="getStatuLabel(drg.statu).class">{{ getStatuLabel(drg.statu).text }}</span>
-                    
-                    <!-- Afficher le temps total et le temps restant -->
-                    <p>Temps total : {{ getTotalTime(drg) }} heures</p>
-                    <p>Temps restant : {{ getRemainingTime(drg) }} heures</p>
-                    
-                    <!-- Ajouter un lien vers le DRG -->
-                    <a :href="getDrgLink(drg)" class="btn btn-info btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Colonnes pour chaque machine -->
-        <div
-            v-for="machine in machines"
-            :key="machine.id"
-            class="kanban-column card"
-            @drop="drop($event, machine.id)"
-            @dragover="allowDrop"
-            :class="{ 'active': selectedMachineId === machine.id }" 
-            @click="selectMachine(machine.id)" 
+    <!-- Colonne des DRGs sans machine -->
+    <div class="kanban-column" data-machine-id="null">
+      <h3 style="background-color: #ccc">Sans Machine</h3> <span class="kanban-column-total">⏳ Total: {{ getTotalTimeForUnassigned() }} h</span>
+      <draggable 
+          v-model="unassignedDrgs"
+          group="drgs"
+          itemKey="id"
+        class="kanban-list vuedraggable-fade-move"
+          @end="onDrop($event)" 
         >
-            <div class="card-header" :style="{ backgroundColor: machine.color || 'grey' }">
-                <h3 class="card-title">
-                    {{ machine.name }} ({{ remainingTotalTimeForMachine(machine) }} heures)
-                </h3>
+        <template #item="{ element }">
+          <div class="kanban-item">
+            <!-- Colonne gauche (Image + Bouton "Voir") -->
+            <div class="kanban-item-left">
+              <img 
+                :src="`/images/${element.drg_name}.png`" 
+                alt="DRG Image" 
+                class="kanban-item-image"
+              />
+              <p class="kanban-item-title">{{ element.drg_name }}</p>
+              
+              <!-- Bouton Voir sous l'image -->
+              <a :href="getDrgLink(element)" class="btn btn-info btn-sm kanban-item-btn">🔍 Voir</a>
             </div>
-            <div class="card-body">
-                <div
-                    v-for="drg in machine.drgs"
-                    :key="drg.id"
-                    class="kanban-card"
-                    @dragstart="dragStart(drg)"
-                    draggable="true"
-                >
-                    <img 
-                        :src="`/images/${drg.drg_name}.png`" 
-                        alt="Imbrication" 
-                        class="kanban-card-image"
-                    />
-                    <p>{{ drg.drg_name }}</p>
 
-                    <!-- Afficher le statut avec la classe Bootstrap -->
-                    <span :class="getStatuLabel(drg.statu).class">{{ getStatuLabel(drg.statu).text }}</span>
-                    
-                    <!-- Afficher le temps total et le temps restant -->
-                    <p>Temps total : {{ getTotalTime(drg) }} heures</p>
-                    <p>Temps restant : {{ getRemainingTime(drg) }} heures</p>
-                    
-                    <!-- Ajouter un lien vers le DRG -->
-                    <a :href="getDrgLink(drg)" class="btn btn-info btn-sm">Voir</a>
-                </div>
+            <!-- Colonne droite (Infos + Statut) -->
+            <div class="kanban-item-right">
+              <!-- Matériau et épaisseur -->
+              <p class="kanban-item-meta">🛠 Matériau : {{ element.material }}</p>
+              <p class="kanban-item-meta">📏 Épaisseur : {{ element.thickness }} mm</p>
+
+              <!-- Quantité -->
+              <p class="kanban-item-meta">📦 Feuilles : {{ element.sheet_qty }}</p>
+              <p class="kanban-item-meta">✅ Feuilles traitées : {{ element.sheet_qty_done }}</p>
+
+              <!-- Temps total et restant -->
+              <p class="kanban-item-meta">⏳ Temps total : {{ getTotalTime(element) }} h</p>
+              <p class="kanban-item-meta">⌛ Temps restant : {{ getRemainingTime(element) }} h</p>
+
+              <!-- Statut sous les infos -->
+              <small v-if="getStatuLabel(element.statu)" 
+                    :class="getStatuLabel(element.statu).class">
+                {{ getStatuLabel(element.statu).text }}
+              </small>
             </div>
-        </div>
+          </div>
+        </template>
+
+      </draggable>
     </div>
+
+    <!-- Colonnes des machines -->
+    <div v-for="machine in machines" :key="machine.id" class="kanban-column" :data-machine-id="machine.id">
+
+      <h3 :style="{ backgroundColor: machine.color || '#808080' }">
+        {{ machine.name }}
+      </h3>
+      <span class="kanban-column-total">⏳ Total: {{ getTotalTimeForMachine(machine) }} h</span>
+      <draggable 
+        v-model="machine.drgs" 
+        group="drgs" 
+        itemKey="id" 
+        class="kanban-list vuedraggable-fade-move"
+        @end="onDrop($event)"
+      >
+      <template #item="{ element }">
+        <div class="kanban-item">
+          <!-- Colonne gauche (Image + Bouton "Voir") -->
+          <div class="kanban-item-left">
+            <img 
+              :src="`/images/${element.drg_name}.png`" 
+              alt="DRG Image" 
+              class="kanban-item-image"
+            />
+            <p class="kanban-item-title">{{ element.drg_name }}</p>
+            
+            <!-- Bouton Voir sous l'image -->
+            <a :href="getDrgLink(element)" class="btn btn-info btn-sm kanban-item-btn">🔍 Voir</a>
+          </div>
+
+          <!-- Colonne droite (Infos + Statut) -->
+          <div class="kanban-item-right">
+            <!-- Matériau et épaisseur -->
+            <p class="kanban-item-meta">🛠 Matériau : {{ element.material }}</p>
+            <p class="kanban-item-meta">📏 Épaisseur : {{ element.thickness }} mm</p>
+
+            <!-- Quantité -->
+            <p class="kanban-item-meta">📦 Feuilles : {{ element.sheet_qty }}</p>
+            <p class="kanban-item-meta">✅ Feuilles traitées : {{ element.sheet_qty_done }}</p>
+
+            <!-- Temps total et restant -->
+            <p class="kanban-item-meta">⏳ Temps total : {{ getTotalTime(element) }} h</p>
+            <p class="kanban-item-meta">⌛ Temps restant : {{ getRemainingTime(element) }} h</p>
+
+            <!-- Statut sous les infos -->
+            <small v-if="getStatuLabel(element.statu)" 
+                  :class="getStatuLabel(element.statu).class">
+              {{ getStatuLabel(element.statu).text }}
+            </small>
+          </div>
+        </div>
+      </template>
+
+      </draggable>
+    </div>
+
+  </div>
 </template>
+
 <script>
+import { ref, onMounted, computed } from "vue";
+import draggable from "vuedraggable";
+import axios from "axios";
+
 export default {
-    name: 'Kanban',
-    props: {
-        drgs: {
-            type: Array,
-            required: true
-        },
-        machines: {
-            type: Array,
-            required: true
-        }
-    },
-    data() {
-        return {
-            selectedMachineId: null,
-            selectedDrg: null,
-            drgsWithoutMachine: this.drgs.filter(drg => !drg.machine_id)
-        };
-    },
-    methods: {
-        dragStart(drg) {
-            this.selectedDrg = drg;
-        },
-        allowDrop(event) {
-            event.preventDefault();
-        },
-        drop(event, targetMachineId) {
-            event.preventDefault();
-            if (!this.selectedDrg) return;
+  components: { draggable },
+  setup() {
+    const machines = ref([]);
+    const unassignedDrgs = ref([]);
 
-            const sourceMachineId = this.selectedDrg.machine_id;
+    const getTotalTime = (drg) => {
+    return (drg.unit_time * drg.sheet_qty).toFixed(2); // Temps total en heures
+    };
 
-            // Si le DRG est déjà assigné à une machine, on l'enlève de la machine source
-            if (sourceMachineId !== null && sourceMachineId !== targetMachineId) {
-                const sourceMachine = this.machines.find(machine => machine.id === sourceMachineId);
-                if (sourceMachine) {
-                    const index = sourceMachine.drgs.findIndex(drg => drg.id === this.selectedDrg.id);
-                    if (index > -1) {
-                        sourceMachine.drgs.splice(index, 1); // Retirer le DRG de la machine source
-                    }
-                }
-            }
+    const getRemainingTime = (drg) => {
+      const totalTime = drg.unit_time * drg.sheet_qty;
+      return (totalTime - drg.real_full_time).toFixed(2); // Temps restant
+    };
 
-            // Mettre à jour la machine cible via un appel API
-            fetch(`/drg/${this.selectedDrg.id}/assign-machine`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ machine_id: targetMachineId })
-            })
-            .then(response => response.json())
-            .then(updatedDrg => this.updateDrgsAfterAssign(updatedDrg, targetMachineId))
-            .catch(error => console.error("Erreur d'affectation:", error));
-        },
-        updateDrgsAfterAssign(updatedDrg, targetMachineId) {
-            // Mettre à jour la liste des DRGs sans machine si besoin
-            const indexWithoutMachine = this.drgsWithoutMachine.findIndex(drg => drg.id === updatedDrg.id);
-            if (indexWithoutMachine > -1) {
-                this.drgsWithoutMachine.splice(indexWithoutMachine, 1);
-            }
+    const getDrgLink = (drg) => {
+      return `/drgs/${drg.id}`; // URL de détail du DRG
+    };
 
-            // Trouver la machine cible
-            const targetMachine = this.machines.find(machine => machine.id === targetMachineId);
-            if (targetMachine) {
-                // Recréer un nouveau tableau de DRGs pour la machine cible
-                targetMachine.drgs = [...targetMachine.drgs, updatedDrg];
-            }
+    const getTotalTimeForMachine = (machine) => {
+      if (!machine || !machine.drgs) return "0.00"; // Vérification de sécurité
+      return machine.drgs.reduce((total, drg) => total + parseFloat(getTotalTime(drg) || 0), 0).toFixed(2);
+    };
 
-            // Assurer que l'ID de la machine du DRG soit mis à jour
-            this.selectedDrg.machine_id = targetMachineId;
+    const getTotalTimeForUnassigned = () => {
+      if (!unassignedDrgs.value) return "0.00"; // Vérification de sécurité
+      return unassignedDrgs.value.reduce((total, drg) => total + parseFloat(getTotalTime(drg) || 0), 0).toFixed(2);
+    };
 
-            // Remettre selectedDrg à null après l'assignation
-            this.selectedDrg = null;
-        },
-        selectMachine(machineId) {
-            this.selectedMachineId = machineId;
-        },
-        getTotalTime(drg) {
-            return Math.round(drg.unit_time * drg.sheet_qty * 100) / 100;
-        },
-        getRemainingTime(drg) {
-            const totalTime = this.getTotalTime(drg);
-            return Math.round((totalTime - drg.real_full_time) * 100) / 100;
-        },
-        getDrgLink(drg) {
-            return `/drgs/${drg.id}`; // Le lien vers la page de détail
-        },
-        getStatuLabel(statu) {
+    const getStatuLabel = (statu) => {
             switch (statu) {
                 case 1:
                     return { text: 'A planifier', class: 'badge badge-warning' };
@@ -188,110 +163,219 @@ export default {
                 default:
                     return { text: 'Inconnu', class: 'badge badge-light' };
             }
-        },
-        remainingTotalTimeForDrgsWithoutMachine() {
-            return this.drgsWithoutMachine.reduce((total, drg) => total + drg.remaining_time, 0);
-        },
-        remainingTotalTimeForMachine(machine) {
-        return machine.drgs.reduce((total, drg) => {
-            // Calcul de remaining_time en fonction des données du modèle
-            const remainingTime = (drg.unit_time * drg.sheet_qty) - drg.real_full_time;
-            // Ajouter au total général
-            return total + Math.round(remainingTime * 100) / 100; // arrondi à 2 décimales
-        }, 0);
-    }
-    }
+        };
+
+    const fetchMachines = async () => {
+      try {
+        const response = await axios.get("/api/kanban-machines");
+
+        machines.value = response.data.machines;
+        unassignedDrgs.value = response.data.unassignedDrgs; // Récupère les DRGs sans machine
+
+        console.log("Machines chargées :", machines.value);
+        console.log("DRGs sans machine :", unassignedDrgs.value);
+      } catch (error) {
+        console.error("Erreur lors du chargement des machines :", error);
+      }
+    };
+
+    // Mettre à jour l'ID de la machine d'un DRG déplacé
+    const onDrop = async (event) => {
+      const movedDrg = event.item._underlying_vm_;
+
+      if (!movedDrg) {
+        console.error("Impossible de récupérer le DRG déplacé.");
+        return;
+      }
+
+      // 📌 Récupérer dynamiquement la machine de destination
+      const newMachineElement = event.to.closest(".kanban-column");
+      const newMachineId = newMachineElement ? parseInt(newMachineElement.dataset.machineId, 10) : null;
+
+      const oldMachineId = movedDrg.machine_id; // ID avant déplacement
+
+      console.log("Avant mise à jour | DRG:", movedDrg.id, "Ancienne machine:", oldMachineId, "Nouvelle machine détectée:", newMachineId);
+
+      try {
+        // 🔥 Suppression propre du DRG de son ancienne colonne
+        if (oldMachineId === null) {
+          unassignedDrgs.value = unassignedDrgs.value.filter(drg => drg.id !== movedDrg.id);
+        } else {
+          const oldMachine = machines.value.find(m => m.id === oldMachineId);
+          if (oldMachine) {
+            oldMachine.drgs = oldMachine.drgs.filter(drg => drg.id !== movedDrg.id);
+          }
+        }
+
+        // 🔥 Mise à jour de l'ID avant d'ajouter le DRG
+        movedDrg.machine_id = newMachineId;
+
+        // 🔥 Ajout propre dans la nouvelle colonne (sans doublons)
+        if (newMachineId === null) {
+          if (!unassignedDrgs.value.some(drg => drg.id === movedDrg.id)) {
+            unassignedDrgs.value.push(movedDrg);
+          }
+        } else {
+          const newMachine = machines.value.find(m => m.id === newMachineId);
+          if (newMachine) {
+            if (!newMachine.drgs.some(drg => drg.id === movedDrg.id)) {
+              newMachine.drgs.push(movedDrg);
+            }
+          }
+        }
+
+        // 🔄 Mise à jour forcée des machines pour éviter le cache Vue
+        machines.value = [...machines.value];
+
+        // Envoi de la mise à jour immédiatement à l'API
+        await axios.post("/api/update-drg-machine", {
+          drg_id: movedDrg.id,
+          machine_id: newMachineId,
+        });
+
+        console.log("Mise à jour réussie | DRG:", movedDrg.id, "Nouvelle machine:", newMachineId);
+
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour :", error);
+        }
+    };
+
+    onMounted(fetchMachines);
+
+    return { machines, unassignedDrgs, onDrop ,getTotalTime, getRemainingTime, getDrgLink, getStatuLabel, getTotalTimeForMachine, getTotalTimeForUnassigned};
+  },
 };
 </script>
+
 <style scoped>
-.kanban-board {
+.kanban-item {
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  cursor: grab;
+  border: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 15px; /* Espace entre les colonnes */
+}
+
+/* Partie gauche : Image + Nom + Bouton */
+.kanban-item-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+}
+
+.kanban-item-image {
+  width: 200px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.kanban-item-title {
+  font-weight: bold;
+  font-size: 12px;
+  color: #333;
+  text-align: center;
+}
+
+/* Bouton Voir */
+.kanban-item-btn {
+  margin-top: 5px;
+  width: 80%;
+  text-align: center;
+}
+
+/* Partie droite : Infos + Statut */
+.kanban-item-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.kanban-item-meta {
+  color: #555;
+}
+
+/* Statut aligné en bas */
+.kanban-item-right small {
+  align-self: flex-start;
+  margin-top: 10px;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+.kanban-container {
     display: flex;
-    justify-content: flex-start;
-    gap: 20px;
-    padding: 20px;
+    gap: 16px;
     overflow-x: auto;
-    min-height: calc(100vh - 40px);
+    padding: 20px;
 }
 
 .kanban-column {
-    flex: 0 0 400px;
-    background-color: #2A2F3C;
-    border: 1px solid #3A3F4C;
-    border-radius: 8px;
-    min-height: 400px;
-    max-height: calc(100vh - 80px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  background: #ffffff; /* Fond blanc propre */
+  border-radius: 12px;
+  padding: 15px;
+  min-width: 280px;
+  flex: 1;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 1px solid #ddd;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
-.card-header {
-    background-color: #265eee;
-    border-bottom: 1px solid #3A3F4C;
-    padding: 1rem;
+/* Effet au survol */
+.kanban-column:hover {
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
 }
 
-.card-header-first {
-    background-color: #bd2d2d;
-    border-bottom: 1px solid #3A3F4C;
-    padding: 1rem;
+/* Titre des colonnes */
+.kanban-column h3 {
+  text-align: center;
+  padding: 12px;
+  font-size: 18px;
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-
-.card-title {
-    color: #FFFFFF;
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+/* Spécificité pour la colonne "Sans Machine" */
+.kanban-column[data-machine-id="null"] h3 {
+  background: linear-gradient(135deg, #6c757d, #495057) !important; /* Gris dégradé */
 }
 
-.card-body {
-    padding: 1rem;
-    overflow-y: auto;
-    flex: 1;
+/* Liste des tâches dans chaque colonne */
+.kanban-list {
+  min-height: 320px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
-.kanban-card {
-    background-color: #ffffff;
-    border: 1px solid #4A4F5C;
-    margin: 8px 0;
-    padding: 12px;
-    border-radius: 6px;
-    cursor: move;
-    transition: all 0.2s ease;
-    color: #000000;
+/* Effet doux sur le scroll */
+.kanban-list::-webkit-scrollbar {
+  width: 5px;
 }
 
-.kanban-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: #4A4F5C;
+.kanban-list::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 5px;
 }
 
-.kanban-card p {
-    margin: 0;
-}
-
-.kanban-column.active {
-    border: 2px solid #3B82F6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-}
-
-/* Scrollbar styling */
-.card-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-.card-body::-webkit-scrollbar-track {
-    background: #2A2F3C;
-}
-
-.card-body::-webkit-scrollbar-thumb {
-    background: #4A4F5C;
-    border-radius: 3px;
-}
-
-.card-body::-webkit-scrollbar-thumb:hover {
-    background: #5A5F6C;
+.kanban-list::-webkit-scrollbar-track {
+  background: #f8f9fa;
 }
 </style>

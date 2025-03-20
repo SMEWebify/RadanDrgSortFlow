@@ -15,14 +15,34 @@ class DRGController extends Controller
      */
     public function kanbanMachine()
     {
-        // Récupérer les DRGs sans machine
-        $drgsWithoutMachine = Drg::whereNull('machine_id')->get();
-        
-        // Récupérer les machines et leurs DRGs associés
-        $machines = Machine::with('drgs')->get();
-        
-        // Passer les variables à la vue
-        return view('kanban-machine', compact('drgsWithoutMachine', 'machines'));
+        $machines = Machine::with('drgs')->get(); // Récupère les machines avec leurs DRGs
+        $unassignedDrgs = Drg::whereNull('machine_id')->get(); // Récupère les DRGs sans machine
+    
+        return view('kanban-machine', [
+            'machines' => $machines,
+            'unassignedDrgs' => $unassignedDrgs, // Ajouter les DRGs sans machine
+        ]);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function kanbanStatut()
+    {
+        $drgs = Drg::all(); // Récupère les DRGs sans machine
+    
+        return view('kanban-statut', [
+            'drgs' => $drgs, // Ajouter les DRGs sans machine
+        ]);
+    }
+    
+    public function getDrgsByStatus()
+    {
+        $drgs = Drg::all(); // Récupère tous les DRGs
+
+        return response()->json($drgs);
     }
 
     /**
@@ -132,54 +152,4 @@ class DRGController extends Controller
         return redirect()->route('drgs.index')->with('success', 'Drg supprimé avec succès.');
     }
 
-    /**
-     * Get all DRGs that are not assigned to any machine.
-     *
-     * This method retrieves all DRGs where the 'machine_id' is null,
-     * indicating that they are not currently assigned to any machine.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getDrgsWithoutMachine()
-    {
-        return Drg::whereNull('machine_id')->get();
-    }
-
-    /**
-     * Assigns or removes a machine from the specified DRG.
-     *
-     * This method validates the incoming request to ensure that the 'machine_id' is either null or exists in the 'machines' table.
-     * If the validation passes, it assigns the machine to the DRG or removes it if 'machine_id' is null.
-     * The updated DRG is then saved to the database.
-     *
-     * @param \Illuminate\Http\Request $request The incoming request containing the 'machine_id'.
-     * @param \App\Models\Drg $drg The DRG instance to which the machine will be assigned or removed.
-     * @return \Illuminate\Http\JsonResponse The JSON response containing the updated DRG.
-     */
-    public function assignMachine(Request $request, Drg $drg)
-    {
-        $validated = $request->validate([
-            'machine_id' => 'nullable|exists:machines,id',
-        ]);
-
-        // Assigner ou supprimer la machine du DRG
-        $drg->machine_id = $validated['machine_id'];
-        $drg->save();
-
-        return response()->json($drg);
-    }
-
-    /**
-     * Display a listing of the machines with their assigned DRGs.
-     *
-     * This method retrieves all machines along with their associated DRGs
-     * using Eloquent's `with` method to eager load the relationships.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function indexKanban()
-    {
-        return Machine::active()->with('drgs')->get(); // Inclut les DRGs assignés à chaque machine
-    }
-    
 }

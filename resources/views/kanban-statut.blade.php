@@ -1,15 +1,15 @@
 @extends('adminlte::page')
 
-@section('title', 'Affecter programme')
+@section('title', 'Changer statut')
 
 @section('content_header')
-    <h1>Affecter programme aux machines</h1>
+    <h1>Changer statut des programmes</h1>
 @stop
 
 
 @section('content')
 <div id="app">
-    <kanban-machine :machines='@json($machines)' :unassigned-drgs='@json($unassignedDrgs)'></kanban-machine>
+    <kanban-statut :drgs='@json($drgs)'></kanban-statut>
 </div>
 
 @stop
